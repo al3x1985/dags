@@ -109,6 +109,7 @@ def trace_handler(frame, event, arg):
 def enable_tracing():
     # Устанавливаем trace_handler для отлова всех вызовов
     sys.settrace(trace_handler)
+    logging.info("Test message")
 
 default_args = {
     'owner': 'airflow',
