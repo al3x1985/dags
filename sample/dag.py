@@ -109,6 +109,14 @@ def trace_handler(frame, event, arg):
 def enable_tracing():
     # Устанавливаем trace_handler для отлова всех вызовов
     sys.settrace(trace_handler)
+    task_logger = logging.getLogger("airflow.task")
+
+    # Выводим информацию о всех хэндлерах, привязанных к этому логгеру
+    for handler in task_logger.handlers:
+        logging.info(f"Handler: {handler.__class__.__name__}")
+        logging.info(f" - Level: {logging.getLevelName(handler.level)}")
+        logging.info(f" - Formatter: {handler.formatter}")
+        logging.info(f" - Handler Settings: {handler.__dict__}")
     logging.info("Test message")
 
 default_args = {
