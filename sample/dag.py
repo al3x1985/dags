@@ -87,6 +87,19 @@ def trace_handler(frame, event, arg):
     # Перехватываем только входящие вызовы функций
     if event != 'call':
         return
+
+    code = frame.f_code
+    func_name = code.co_name
+    log_functions = ["makeLogRecord", "emit", "set_context"]
+    if func_name in log_functions:
+        # Access function arguments from the frame
+        args = frame.f_locals.copy()
+        # Optionally, log all arguments
+        logging.info(f"{func_name} arguments: {args}")
+        import traceback
+
+        stack_trace = ''.join(traceback.format_stack(limit=MAX_BACKTRACE_LIMIT))
+        logging.info(f"Stack trace for {func_name}:\n{stack}")
     
     # Фильтруем только вызовы, связанные с ElasticSearchTaskHandler
     if 'ElasticsearchTaskHandler' in frame.f_globals:
