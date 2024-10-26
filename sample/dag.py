@@ -90,7 +90,11 @@ def trace_handler(frame, event, arg):
 
     code = frame.f_code
     func_name = code.co_name
-    log_functions = ["makeLogRecord", "emit", "set_context"]
+    log_functions = [
+        #"makeLogRecord", 
+        #"emit", 
+        "set_context",
+    ]
     if func_name in log_functions:
         # Access function arguments from the frame
         args = frame.f_locals.copy()
@@ -130,7 +134,10 @@ def enable_tracing():
         logging.info(f" - Level: {logging.getLevelName(handler.level)}")
         logging.info(f" - Formatter: {handler.formatter}")
         logging.info(f" - Handler Settings: {handler.__dict__}")
-    
+
+    logger = logging.getLogger('airflow.task')
+    print("Attached handlers:", logger.handlers)
+
     airflow_logger = logging.getLogger("airflow")
     # Выводим информацию о логгере и его хендлерах
     print("Current Airflow Logger:", airflow_logger)
