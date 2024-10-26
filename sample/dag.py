@@ -117,7 +117,19 @@ def enable_tracing():
         logging.info(f" - Level: {logging.getLevelName(handler.level)}")
         logging.info(f" - Formatter: {handler.formatter}")
         logging.info(f" - Handler Settings: {handler.__dict__}")
+    
+    airflow_logger = logging.getLogger("airflow")
+    # Выводим информацию о логгере и его хендлерах
+    print("Current Airflow Logger:", airflow_logger)
+    print("Handlers in use:")
+    for handler in airflow_logger.handlers:
+        print(f"  - Handler: {handler.__class__.__name__}")
+        print(f"    Level: {logging.getLevelName(handler.level)}")
+        print(f"    Formatter: {handler.formatter._fmt if handler.formatter else 'None'}")
+        print(f"    Stream: {getattr(handler, 'stream', 'N/A')}")
     logging.info("Test message")
+    print(logging)
+    print(type(logging))
 
 default_args = {
     'owner': 'airflow',
