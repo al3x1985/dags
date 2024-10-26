@@ -98,7 +98,7 @@ def trace_handler(frame, event, arg):
         logging.info(f"{func_name} arguments: {args}")
         import traceback
 
-        stack_trace = ''.join(traceback.format_stack(limit=MAX_BACKTRACE_LIMIT))
+        stack = ''.join(traceback.format_stack(limit=MAX_BACKTRACE_LIMIT))
         logging.info(f"Stack trace for {func_name}:\n{stack}")
     
     # Фильтруем только вызовы, связанные с ElasticSearchTaskHandler
