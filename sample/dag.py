@@ -115,6 +115,7 @@ def trace_handler(frame, event, arg):
         args_info = frame.f_locals
         arg_str = ', '.join([f"{k}={v}" for k, v in args_info.items()])
 
+        import traceback
         # Логгируем функцию, аргументы и бектрейс
         logger.info(f"Method Call: {func_name} in {filename} with args: {arg_str}")
         logger.info("Traceback:")
