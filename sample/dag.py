@@ -73,23 +73,23 @@ d = etl()
 
 import logging
 import traceback
+import sys
 from airflow import DAG
 from airflow.utils.dates import days_ago
 from datetime import timedelta
 from airflow.operators.python import PythonOperator
-from functools import wraps
-from inspect import signature
 
 # Параметры для логирования
 MAX_BACKTRACE_LIMIT = 5
 logger = logging.getLogger("airflow.task")
 
 def trace_handler(frame, event, arg):
+    # Перехватываем только входящие вызовы функций
     if event != 'call':
         return
     
     # Фильтруем только вызовы, связанные с ElasticSearchTaskHandler
-    if 'ElasticSearchTaskHandler' in frame.f_globals:
+    if 'ElasticsearchTaskHandler' in frame.f_globals:
         code = frame.f_code
         func_name = code.co_name
         filename = code.co_filename
@@ -104,19 +104,11 @@ def trace_handler(frame, event, arg):
         stack_trace = ''.join(traceback.format_stack(limit=MAX_BACKTRACE_LIMIT))
         logger.info(stack_trace)
 
-def wrap_elastic_logging(handler_class):
-    for name, method in handler_class.__dict__.items():
-        if callable(method):
-            @wraps(method)
-            def wrapped_method(*args, **kwargs):
-                logger.info(f"Calling method {name} with args: {args} and kwargs: {kwargs}")
-                result = method(*args, **kwargs)
-                return result
-            setattr(handler_class, name, wrapped_method)
+    return trace_handler  # Возвращаем для вложенных вызовов
 
-def log_elastic_methods():
-    from airflow.providers.elasticsearch.log.es_task_handler import ElasticsearchTaskHandler
-    wrap_elastic_logging(ElasticsearchTaskHandler)
+def enable_tracing():
+    # Устанавливаем trace_handler для отлова всех вызовов
+    sys.settrace(trace_handler)
 
 default_args = {
     'owner': 'airflow',
@@ -133,10 +125,10 @@ with DAG(
     catchup=False,
 ) as dag:
 
-    # Таск для установки перехвата методов
+    # Таск для активации трейсинга
     trace_task = PythonOperator(
-        task_id='log_elastic_methods_task',
-        python_callable=log_elastic_methods,
+        task_id='enable_tracing_task',
+        python_callable=enable_tracing,
     )
 
 trace_task
