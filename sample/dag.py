@@ -149,6 +149,10 @@ def enable_tracing():
         print(f"    Formatter: {handler.formatter._fmt if handler.formatter else 'None'}")
         print(f"    Stream: {getattr(handler, 'stream', 'N/A')}")
     logging.info("Test message")
+    sleep(30)
+    logging.info("Test message2")
+    sleep(30)
+    logging.info("Test message3")
     print(logging)
     print(type(logging))
 
