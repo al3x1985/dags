@@ -123,7 +123,7 @@ def trace_handler(frame, event, arg):
         logger.info(stack_trace)
 
     return trace_handler  # Возвращаем для вложенных вызовов
-sys.settrace(trace_handler)
+#sys.settrace(trace_handler)
 
 def enable_tracing():
     # Устанавливаем trace_handler для отлова всех вызовов
